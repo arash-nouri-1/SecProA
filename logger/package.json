@@ -1,0 +1,34 @@
+{
+  "name": "@watcherwhale/logfile",
+  "version": "1.0.0",
+  "description": "Create an easy log file with easily configured loggers.",
+  "main": "lib/index.js",
+  "repository": "git://github.com/WatcherWhale/SecProA.git",
+  "contributors": [
+    {
+      "name": "Mathias Maes"
+    },
+    {
+      "name": "Cato van Hooijdonk"
+    },
+    {
+      "name": "Arash Nouri"
+    },
+    {
+      "name": "Dimitriy Vassilchenko"
+    }
+  ],
+  "keywords": [
+    "logging"
+  ],
+  "bugs": {
+    "url": "https://github.com/WatcherWhale/SecProA/issues"
+  },
+  "homepage": "https://github.com/WatcherWhale/SecProA#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "morgan": "^1.10.0",
+    "rotating-file-stream": "^3.0.2",
+    "winston": "^3.6.0"
+  }
+}
