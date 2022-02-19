@@ -1,0 +1,34 @@
+{
+  "name": "redis",
+  "version": "1.0.0",
+  "description": "redis library",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "contributors":[
+    {
+      "name": "Cato van Hooijdonk"
+    },
+    {
+      "name": "Mathias Maes"
+    },
+    {
+      "name": "Arash Nouri"
+    },
+    {
+      "name": "Dimitriy Vassilchenko"
+    }
+  ],
+  "dependencies":{
+    "redis": "^4.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WatcherWhale/SecProA.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WatcherWhale/SecProA/issues"
+  },
+  "homepage": "https://github.com/WatcherWhale/SecProA#readme"
+}
