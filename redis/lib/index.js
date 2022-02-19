@@ -83,7 +83,7 @@ class Redis
     /**
      * @param {(...args: any[])=> void} callback
      */
-    onReady()
+    onReady(callback)
     {
         this.client.on("ready", callback)
     }
@@ -91,7 +91,7 @@ class Redis
     /**
      * @param {(...args: any[])=> void} callback
      */
-    onDisconnect()
+    onDisconnect(callback)
     {
         this.client.on("end", callback)
     }
@@ -99,7 +99,7 @@ class Redis
     /**
      * @param {(...args: any[])=> void} callback
      */
-    onReconnect()
+    onReconnect(callback)
     {
         this.client.on("reconnect", callback)
     }
