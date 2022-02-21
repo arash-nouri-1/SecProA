@@ -33,3 +33,10 @@ redis:
 
     # Do not run 2 or more redis proxy instances on the same node.
     hostSeperated: false
+
+sequencer:
+  replicas: 3
+  tag: latest
+  port: 80
+
+  pullPolicy: IfNotPresent
