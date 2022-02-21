@@ -1,0 +1,23 @@
+- name: Build Docker Images
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Build Sequencer
+      community.docker.docker_image:
+        name: "{{ docker.registry }}/sequencer"
+        tag: "{{ docker.buildTag }}"
+
+        source: build
+
+        build:
+          path: ../../
+          dockerfile: docker/Dockerfile.service
+
+          args:
+            project: sequencer
+
+          pull: yes
+
+        push: "{{ docker.push }}"
+
+
