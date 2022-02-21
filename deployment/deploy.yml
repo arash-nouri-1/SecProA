@@ -1,0 +1,14 @@
+- name: "Load variables"
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: "Load Config"
+      include_vars:
+        file: ./config.yml
+
+- import_playbook: "./build/build-services.yml"
+  when: build.enabled == true
+
+- import_playbook: "./kubernetes/setup.yml"
+
+- import_playbook: "./redis/deploy-redis.yml"

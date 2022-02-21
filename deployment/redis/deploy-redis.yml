@@ -1,0 +1,40 @@
+- name: "Deploy Redis Cluster"
+  hosts: configurator
+  tasks:
+    - name: Add required helm repo
+      kubernetes.core.helm_repository:
+        name: dandydev
+        repo_url: https://dandydeveloper.github.io/charts
+    - name: Install Redis cluster
+      kubernetes.core.helm:
+        name: "{{ redis.name }}"
+        chart_ref: dandydev/redis-ha
+        release_namespace: "{{ cluster.namespace }}"
+        release_values:
+          hardAntiAffinity: "{{ redis.hostSeperated }}"
+          image:
+            tag: "{{ redis.tag }}"
+
+          replicas: "{{ redis.replicas }}"
+
+          haproxy:
+            enabled: true
+
+            replicas: "{{ redis.proxy.replicas }}"
+            hardAntiAffinity: "{{ redis.proxy.hostSeperated }}"
+
+            servicePort: 6379
+            containerPort: 6379
+
+            image:
+              repository: haproxy
+              tag: alpine
+              pullPolicy: IfNotPresent
+
+            service:
+              type: ClusterIP
+
+          securityContext:
+            runAsUser: 1000
+            fsGroup: 1000
+            runAsNonRoot: true

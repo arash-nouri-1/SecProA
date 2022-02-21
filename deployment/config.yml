@@ -1,0 +1,35 @@
+build:
+  # Build all images before deploying
+  enabled: true
+
+docker:
+  registry: howsami
+  push: no
+
+  buildTag: latest
+
+cluster:
+  # The kubernetes namespace to deploy to
+  namespace: howsami
+
+redis:
+  # Name for the redis cluster
+  # Domain: <name>-redis-ha-server-0.<namespace>.svc.cluster.local
+  name: howsami
+
+  # Do not run 2 or more redis instances on the same node.
+  hostSeperated: false
+
+  # Docker tag of the redis pods
+  tag: 6-alpine
+
+  # Amount of redis database replicas
+  # DO NOT CONFIGURE TO 2
+  replicas: 3
+
+  proxy:
+    # Amount of proxy replicas
+    replicas: 3
+
+    # Do not run 2 or more redis proxy instances on the same node.
+    hostSeperated: false
