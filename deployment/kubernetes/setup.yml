@@ -1,11 +1,6 @@
 - name: Install Required packages
   hosts: configurator
   tasks:
-    - name: "Install kubectl"
-      package:
-        name: "kubectl"
-        state: latest
-
     - name: "Install helm"
       package:
         name: "helm"
