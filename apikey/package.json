@@ -1,0 +1,38 @@
+{
+  "name": "apikey",
+  "version": "1.0.0",
+  "description": "A module for verifying api keys.",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "contributors": [
+    {
+      "name": "Dimitriy Vassilchenko"
+    },
+    {
+      "name": "Mathias Maes"
+    },
+    {
+      "name": "Cato van Hooijdonk"
+    },
+    {
+      "name": "Arash Nouri"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WatcherWhale/SecProA.git"
+  },
+  "keywords": [
+    "api-key",
+    "authentication"
+  ],
+  "bugs": {
+    "url": "https://github.com/WatcherWhale/SecProA/issues"
+  },
+  "homepage": "https://github.com/WatcherWhale/SecProA#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
