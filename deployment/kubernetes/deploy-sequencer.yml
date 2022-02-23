@@ -32,7 +32,9 @@
                       - name: PORT
                         value: "{{ sequencer.port | string }}"
                       - name: REDIS_HOST
-                        value: "{{ redis.name }}-redis-ha-haproxy.{{ cluster.namespace }}.svc.cluster.local"
+                        value: "{{ redis.name }}-redis-sentinel.{{ cluster.namespace }}.svc.cluster.local"
+                      - name: REDIS_PORT
+                        value: "26379"
 
     - name: Deploy Sequencer Service
       kubernetes.core.k8s:
