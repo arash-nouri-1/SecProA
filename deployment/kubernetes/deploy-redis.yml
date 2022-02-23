@@ -18,23 +18,6 @@
 
           replicas: "{{ redis.replicas }}"
 
-          haproxy:
-            enabled: true
-
-            replicas: "{{ redis.proxy.replicas }}"
-            hardAntiAffinity: "{{ redis.proxy.hostSeperated }}"
-
-            servicePort: 6379
-            containerPort: 6379
-
-            image:
-              repository: haproxy
-              tag: alpine
-              pullPolicy: IfNotPresent
-
-            service:
-              type: ClusterIP
-
           securityContext:
             runAsUser: 1000
             fsGroup: 1000

@@ -20,8 +20,8 @@ cluster:
 
 redis:
   # Name for the redis cluster
-  # Domain: <name>-redis-ha-server-0.<namespace>.svc.cluster.local
-  name: test
+  # Domain: <name>-redis-sentinel.<namespace>.svc.cluster.local
+  name: howsami
 
   # Run all instances on speperate hosts
   hostSeperated: false
@@ -32,13 +32,6 @@ redis:
   # Amount of redis database replicas
   # Must be at least 3
   replicas: 3
-
-  proxy:
-    # Amount of proxy replicas
-    replicas: 3
-
-    # Run all instances on speperate hosts
-    hostSeperated: false
 
 sequencer:
   # Amount of sequencer replicas
