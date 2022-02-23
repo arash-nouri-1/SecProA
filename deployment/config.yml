@@ -3,9 +3,15 @@ build:
   enabled: true
 
 docker:
+  # Registry / account to push the images to
+  #  <registry>/<image name>:<tag>
   registry: howsami
+
+  # Push to registry
   push: no
 
+  # The tag of the build
+  #  <registry>/<image name>:<tag>
   buildTag: latest
 
 cluster:
@@ -15,28 +21,37 @@ cluster:
 redis:
   # Name for the redis cluster
   # Domain: <name>-redis-ha-server-0.<namespace>.svc.cluster.local
-  name: howsami
+  name: test
 
-  # Do not run 2 or more redis instances on the same node.
+  # Run all instances on speperate hosts
   hostSeperated: false
 
   # Docker tag of the redis pods
   tag: 6-alpine
 
   # Amount of redis database replicas
-  # DO NOT CONFIGURE TO 2
+  # Must be at least 3
   replicas: 3
 
   proxy:
     # Amount of proxy replicas
     replicas: 3
 
-    # Do not run 2 or more redis proxy instances on the same node.
+    # Run all instances on speperate hosts
     hostSeperated: false
 
 sequencer:
+  # Amount of sequencer replicas
   replicas: 3
+
+  # The docker tag to pull
   tag: latest
+
+  # The port the sequencer runs on
   port: 80
 
+  # The docker pull poliicy
+  # - Never
+  # - Always
+  # - IfNotPresent
   pullPolicy: IfNotPresent
