@@ -1,0 +1,37 @@
+- name: "Remove Kubernetes Deployments"
+  hosts: configurator
+  tasks:
+    - name: Remove Redis cluster
+      kubernetes.core.helm:
+        name: "{{ redis.name }}"
+        chart_ref: dandydev/redis-ha
+        release_namespace: "{{ cluster.namespace }}"
+        state: absent
+
+    - name: "Remove Redis Sentinel Service"
+      kubernetes.core.k8s:
+        state: absent
+        kind: Service
+        namespace: "{{ cluster.namespace }}"
+        name: "{{ redis.name }}-redis-sentinel"
+
+    - name: "Remove Sequencer Deployment"
+      kubernetes.core.k8s:
+        state: absent
+        kind: Deployment
+        namespace: "{{ cluster.namespace }}"
+        name: sequencer
+
+    - name: "Remove Sequencer Service"
+      kubernetes.core.k8s:
+        state: absent
+        kind: Service
+        namespace: "{{ cluster.namespace }}"
+        name: sequencer-server
+
+    - name: "Remove Namesapce"
+      kubernetes.core.k8s:
+        state: absent
+        kind: Namespace
+        name: "{{ cluster.namespace }}"
+
