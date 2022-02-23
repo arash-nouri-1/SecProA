@@ -13,7 +13,7 @@
             labels:
               app: "sequencer"
           spec:
-            replicas: 3
+            replicas: "{{ sequencer.replicas }}"
             selector:
               matchLabels:
                 app: "sequencer"
@@ -48,5 +48,5 @@
               app: sequencer
             ports:
               - protocol: TCP
-                port: 80
-                targetPort: 80
+                port: "{{ sequencer.port }}"
+                targetPort: "{{ sequencer.port }}"
