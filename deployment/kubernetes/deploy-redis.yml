@@ -5,6 +5,7 @@
       kubernetes.core.helm_repository:
         name: dandydev
         repo_url: https://dandydeveloper.github.io/charts
+
     - name: Install Redis cluster
       kubernetes.core.helm:
         name: "{{ redis.name }}"

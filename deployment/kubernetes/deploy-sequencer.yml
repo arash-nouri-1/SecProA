@@ -1,7 +1,7 @@
-- name: "Deploy Sequencer"
+- name: Deploy Sequencer
   hosts: configurator
   tasks:
-    - name: "Deploy Containers"
+    - name: Deploy Sequencer Pods
       kubernetes.core.k8s:
         state: present
         namespace: "{{ cluster.namespace }}"
@@ -34,7 +34,7 @@
                       - name: REDIS_HOST
                         value: "{{ redis.name }}-redis-ha-haproxy.{{ cluster.namespace }}.svc.cluster.local"
 
-    - name: "Deploy ClusterIP Service"
+    - name: Deploy Sequencer Service
       kubernetes.core.k8s:
         state: present
         namespace: "{{ cluster.namespace }}"

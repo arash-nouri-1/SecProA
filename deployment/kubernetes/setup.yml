@@ -1,4 +1,4 @@
-- name: "Install Required packages"
+- name: Install Required packages
   hosts: configurator
   tasks:
     - name: "Install kubectl"
@@ -11,7 +11,7 @@
         name: "helm"
         state: latest
 
-- name: "Setup Kubernetes"
+- name: Setup Kubernetes
   hosts: configurator
   tasks:
     - name: "Create namespace"
