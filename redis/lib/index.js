@@ -7,8 +7,8 @@ const redis = require("redis");
 class Redis
 {
     /**
-     * @param {string} host 
-     * @param {number} port 
+     * @param {string} host
+     * @param {number} port
      */
     constructor(host, port=6379)
     {
@@ -34,7 +34,7 @@ class Redis
     }
 
     /**
-     * @param {string} Id 
+     * @param {string} Id
      * @param {any} Value JSON-object that gets parsed to a string
      * @returns {Promise<number>}
      */
@@ -45,7 +45,7 @@ class Redis
     }
 
     /**
-     * @param {string} Id 
+     * @param {string} Id
      * @returns {Promise<string>}
      */
     pop(Id)
@@ -55,7 +55,7 @@ class Redis
     }
 
     /**
-     * @param {string} Id 
+     * @param {string} Id
      * @returns {Promise<string[]>}
      */
     async popEmpty(Id)
@@ -70,7 +70,7 @@ class Redis
      */
     onError(callback)
     {
-        this.client.on("error", callback)
+        this.client.on("error", callback);
     }
 
     /**
@@ -79,7 +79,7 @@ class Redis
 
     onConnect(callback)
     {
-        this.client.on("connect", callback)
+        this.client.on("connect", callback);
     }
 
     /**
@@ -87,7 +87,7 @@ class Redis
      */
     onReady(callback)
     {
-        this.client.on("ready", callback)
+        this.client.on("ready", callback);
     }
 
     /**
@@ -95,7 +95,7 @@ class Redis
      */
     onDisconnect(callback)
     {
-        this.client.on("end", callback)
+        this.client.on("end", callback);
     }
 
     /**
@@ -103,7 +103,7 @@ class Redis
      */
     onReconnect(callback)
     {
-        this.client.on("reconnect", callback)
+        this.client.on("reconnect", callback);
     }
 }
 

@@ -1,4 +1,4 @@
-const RedisClient = require('../lib/index.js');
+const RedisClient = require("../lib/index.js");
 const client = new RedisClient(6379, "localhost");
 
 (async () => {
@@ -16,6 +16,6 @@ const client = new RedisClient(6379, "localhost");
     console.log(output);
     console.log("PopEmpty");
     console.log(output2);
-    
+
     await client.disconnect();
 })();

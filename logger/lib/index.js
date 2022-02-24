@@ -17,12 +17,7 @@ class LogFile
     {
         this.logFile = logFile;
         this.level = level;
-        this.rfsOptions = {
-                size: "10M",
-                interval: "1d",
-                compress: "gzip",
-                path: "logs"
-        };
+        this.rfsOptions = rfsOptions;
 
         this.logger = winston.createLogger({
             level: this.level,
@@ -64,7 +59,11 @@ class LogFile
         router.use(morgan("common", {stream: new LogStream(this.logger, logLevel)}));
 
         if(!filename || filename !== "")
-            router.use(morgan("combined", {stream: rfs.createStream(filename, this.rfsOptions)}))
+        {
+            router.use(morgan("combined", {
+                stream: rfs.createStream(filename, this.rfsOptions)
+            }));
+        }
 
         return router;
     }
@@ -81,7 +80,9 @@ class LogFile
     static createLogFile(filename, level = "info", rfsOptions = {size: "10M", interval: "1d", compress: "gzip", path: "logs"})
     {
         if(!LogFile.loggers)
+        {
             LogFile.loggers = {};
+        }
 
         if(Object.keys(LogFile.loggers).indexOf(filename) === -1)
         {
@@ -110,7 +111,7 @@ class LogStream
     /**
      * Write a message to a logger.
      */
-    write(msg, encoding)
+    write(msg)
     {
         this.logger[this.level](msg.trim());
     }

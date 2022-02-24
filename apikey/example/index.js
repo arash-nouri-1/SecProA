@@ -1,5 +1,5 @@
 const express = require("express");
-const verifyKey = require("../lib/index.js")
+const verifyKey = require("../lib/index.js");
 
 const app = express();
 app.use(verifyKey);

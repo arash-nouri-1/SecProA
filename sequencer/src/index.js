@@ -24,7 +24,7 @@ app.use("/api/v1", apiRouter);
 
 // Register 404 route
 app.all("*", async (req, res) => {
-    res.status(404).send({status: 404, message: "This route does not exist!"})
+    res.status(404).send({status: 404, message: "This route does not exist!"});
 });
 
 
@@ -36,7 +36,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 // Graceful shutdown
 process.on("SIGINT", shutdown)
-       .on("SIGTERM", shutdown);
+    .on("SIGTERM", shutdown);
 
 async function shutdown()
 {
@@ -44,8 +44,7 @@ async function shutdown()
 
     await apiRouter.close();
     server.close(() => {
-        logger.info("Closed Web Server.")
-        logger.info("Shutdown successful.")
+        logger.info("Closed Web Server.");
+        logger.info("Shutdown successful.");
     });
 }
-

@@ -28,11 +28,11 @@ redisClient.onReady(() => {
 });
 
 redisClient.onDisconnect(() => {
-    logger.info("Disconnected from the redis database.")
+    logger.info("Disconnected from the redis database.");
 });
 
 // Connect to the redis client
-logger.debug(`Connecting to the redis database at ${process.env.REDIS_HOST || "localhost"}:${process.env.REDIS_PORT || 6379}`)
+logger.debug(`Connecting to the redis database at ${process.env.REDIS_HOST || "localhost"}:${process.env.REDIS_PORT || 6379}`);
 redisClient.connect();
 
 // Create an express router
@@ -65,9 +65,9 @@ router.post("/results/:id", async (req, res) => {
     const results = req.body;
     logger.debug(JSON.stringify(req.body));
 
-    await redisClient.insert("results:" + queueId, results)
+    await redisClient.insert("results:" + queueId, results);
 
-    res.status(201).send({status: 201, message: "Results successfully registered."})
+    res.status(201).send({status: 201, message: "Results successfully registered."});
 });
 
 
