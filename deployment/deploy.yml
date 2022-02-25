@@ -1,0 +1,24 @@
+- name: "Load Config on localhost"
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: "Load Config on localhost"
+      include_vars:
+        file: ./config.yml
+
+- name: "Load Config on configurator host"
+  hosts: configurator
+  tasks:
+    - name: "Load Config on configurator host"
+      include_vars:
+        file: ./config.yml
+
+
+- import_playbook: "./build/build-services.yml"
+  when: build.enabled == true
+
+- import_playbook: "./kubernetes/setup.yml"
+
+- import_playbook: "./kubernetes/deploy-redis.yml"
+
+- import_playbook: "./kubernetes/deploy-sequencer.yml"

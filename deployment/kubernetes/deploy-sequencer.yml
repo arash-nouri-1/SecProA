@@ -1,0 +1,54 @@
+- name: Deploy Sequencer
+  hosts: configurator
+  tasks:
+    - name: Deploy Sequencer Pods
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: v1
+          kind: Deployment
+          metadata:
+            name: "sequencer"
+            labels:
+              app: "sequencer"
+          spec:
+            replicas: "{{ sequencer.replicas }}"
+            selector:
+              matchLabels:
+                app: "sequencer"
+            template:
+              metadata:
+                labels:
+                  app: "sequencer"
+              spec:
+                containers:
+                  - name: "sequencer"
+                    image: "{{ docker.registry }}/sequencer:{{ sequencer.tag }}"
+                    imagePullPolicy: "{{ sequencer.pullPolicy }}"
+                    ports:
+                      - containerPort: "{{ sequencer.port }}"
+                    env:
+                      - name: PORT
+                        value: "{{ sequencer.port | string }}"
+                      - name: REDIS_HOST
+                        value: "{{ redis.name }}-redis-sentinel.{{ cluster.namespace }}.svc.cluster.local"
+                      - name: REDIS_PORT
+                        value: "26379"
+
+    - name: Deploy Sequencer Service
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: sequencer-server
+          spec:
+            selector:
+              app: sequencer
+            ports:
+              - protocol: TCP
+                port: "{{ sequencer.port }}"
+                targetPort: "{{ sequencer.port }}"
