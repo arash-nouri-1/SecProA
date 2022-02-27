@@ -4,13 +4,38 @@ const express = require("express");
 const router = express.Router();
 let keys = [];
 
-fs.watch("./api.json", loadKeys);
-loadKeys();
+startWatching();
 
+/**
+ * Start waching every 5sec if the api.json is present.
+ */
+function startWatching()
+{
+    try
+    {
+        fs.watch("./api.json", loadKeys);
+        loadKeys();
+    }
+    catch(e)
+    {
+        setTimeout(startWatching, 5000);
+    }
+}
+
+/**
+ * Load keys from file into the allowed keys array.
+ */
 function loadKeys()
 {
-    let rawdata = fs.readFileSync("./api.json").toString();
-    keys = JSON.parse(rawdata);
+    try
+    {
+        let rawdata = fs.readFileSync("./api.json").toString();
+        keys = JSON.parse(rawdata);
+    }
+    catch(err)
+    {
+        keys = [];
+    }
 }
 
 router.use((req, res, next) => {
