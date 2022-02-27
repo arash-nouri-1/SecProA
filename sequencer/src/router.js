@@ -57,15 +57,12 @@ router.get("/job/:id", async (req, res) => {
 });
 
 // Post results
-router.post("/results/:id", async (req, res) => {
-
-    const queueId = req.params.id;
-    logger.debug(`Adding results to ${queueId} queue.`);
+router.post("/results", async (req, res) => {
 
     const results = req.body;
     logger.debug(JSON.stringify(req.body));
 
-    await redisClient.insert("results:" + queueId, results);
+    await redisClient.insert("results", results);
 
     res.status(201).send({status: 201, message: "Results successfully registered."});
 });
