@@ -1,0 +1,4 @@
+name: https
+stages:
+  - name: HTTPS Checks
+    checks:
