@@ -1,8 +1,7 @@
 const RedisClient = require("../lib/index.js");
-const client = new RedisClient(6379, "localhost");
+const client = new RedisClient("localhost", 6379);
 
 (async () => {
-    await client.connect();
     await client.insert("test", {domain: "www"});
     const output = await client.pop("test");
     await client.insert("test", {domain: "www1"});

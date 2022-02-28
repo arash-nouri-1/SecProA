@@ -1,4 +1,5 @@
-const redis = require("redis");
+const IoRedis = require("ioredis");
+const RedLock = require("redlock").default;
 
 /**
  * this class contains all methods needed to connect with a redis server
@@ -12,21 +13,17 @@ class Redis
      */
     constructor(host, port=6379)
     {
-        this.client = redis.createClient({
-            url: `redis://${host}:${port}`
+        this.client = new IoRedis({
+            port: port,
+            host: host
+            //password: x
         });
+        this.redLock = new RedLock([this.client]);
     }
 
     /**
      * @returns {Promise<void>}
-     */
-    connect()
-    {
-        return this.client.connect();
-    }
-
-    /**
-     * @returns {Promise<void>}
+     * closes connection immediately, regardless of pending replies
      */
     disconnect()
     {
@@ -34,35 +31,63 @@ class Redis
     }
 
     /**
-     * @param {string} Id
-     * @param {any} Value JSON-object that gets parsed to a string
+     * @returns {Promise<void>}
+     * closes connection after all pending replies are resolved
+     */
+    quit()
+    {
+        return this.client.quit();
+    }
+
+    /**
+     * @param {string} key
+     * @param {any} value JSON-object that gets parsed to a string
      * @returns {Promise<number>}
+     * returns Key with value according to the FIFO principle
      */
-    insert(Id, Value)
+    insert(key, value)
     {
-        //inserts Id with value at the bottom => FIFO
-        return this.client.RPUSH(Id, JSON.stringify(Value));
+        return this.client.rpush(key, JSON.stringify(value));
     }
 
     /**
-     * @param {string} Id
+     * @param {string} key
      * @returns {Promise<string>}
+     * deletes and returns the oldest job
      */
-    pop(Id)
+    pop(key)
     {
-        //delete and return Oldest Id
-        return this.client.LPOP(Id);
+        return this.client.lpop(key);
     }
 
     /**
-     * @param {string} Id
+     * @param {string} key
      * @returns {Promise<string[]>}
+     * deletes and returns a list
      */
-    async popEmpty(Id)
+    async popEmpty(key)
     {
-        //delete and return entire Id list
-        const amount= await this.client.LLEN(Id);
-        return this.client.LPOP_COUNT(Id, amount);
+        const self = this;
+        let list;
+        await this.redLock.using([key + ":lock"], 5000, async signal => {
+            const amount = await self.client.llen(key);
+
+            if (signal.aborted)
+            {
+                throw signal.error;
+            }
+
+            list = await self.client.lpop(key, amount);
+        });
+        return list;
+    }
+
+    /**
+     * @param {(...args: any[])=> void} callback
+     */
+    onErrorRedLock(callback)
+    {
+        this.redLock.on("error", callback);
     }
 
     /**
@@ -76,7 +101,6 @@ class Redis
     /**
      * @param {(...args: any[])=> void} callback
      */
-
     onConnect(callback)
     {
         this.client.on("connect", callback);
