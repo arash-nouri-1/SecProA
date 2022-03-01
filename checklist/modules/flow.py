@@ -28,14 +28,15 @@ class Flow:
 
             print(f"Executing stage {i + 1}/{stages}: {stage['name']}")
 
+            if stage['checks'] is None or len(stage['checks']) == 0:
+                continue
+
             checks = []
 
-            for j in range(len(stage['checks'])):
-                check = stage['checks'][j]
-                checks.append(Popen(["./checks/" + check, domain], stdout=PIPE, encoding="utf-8", env=env))
+            for check in stage['checks']:
+                checks.append(Popen(["./" + check, domain], stdout=PIPE, encoding="utf-8", env=env))
 
-            for j in range(len(checks)):
-                check = checks[j]
+            for check in checks:
                 output, err = check.communicate()
 
                 result = json.loads(output)
