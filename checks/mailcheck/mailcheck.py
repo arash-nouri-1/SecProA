@@ -41,4 +41,3 @@ except:
   SPFresult="Failed to find SPF record."
   pass
 result={"name":"Mailcheck","score":0,"message":[mes,mes1,mes2],"output":{"DMAR":DMARCresult,"DKIM":DKIMCresult,"SPF":SPFresult}}
-print(result)
