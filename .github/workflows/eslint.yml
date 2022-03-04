@@ -1,8 +1,5 @@
 name: Code Style
 on:
-  pull_request:
-    paths:
-      - '**.js'
   push:
     paths:
       - '**.js'

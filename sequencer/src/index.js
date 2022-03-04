@@ -38,6 +38,9 @@ const server = app.listen(process.env.PORT || 3000, () => {
 process.on("SIGINT", shutdown)
     .on("SIGTERM", shutdown);
 
+/**
+ * Shutdown service gracefully.
+ */
 async function shutdown()
 {
     logger.info("Shutting down service.");

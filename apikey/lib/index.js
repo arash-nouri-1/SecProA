@@ -29,7 +29,7 @@ function loadKeys()
 {
     try
     {
-        let rawdata = fs.readFileSync("./api.json").toString();
+        const rawdata = fs.readFileSync("./api.json").toString();
         keys = JSON.parse(rawdata);
     }
     catch(err)

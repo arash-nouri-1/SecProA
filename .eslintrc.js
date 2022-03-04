@@ -49,6 +49,37 @@ module.exports = {
         ],
         "no-trailing-spaces": [
             "error"
+        ],
+        "require-jsdoc": [
+            "error",
+            {
+                "require": {
+                    "FunctionDeclaration": true,
+                    "MethodDefinition": false,
+                    "ClassDeclaration": false,
+                    "ArrowFunctionExpression": false,
+                    "FunctionExpression": false
+                }
+            }
+        ],
+        "camelcase": [
+            "error"
+        ],
+        "prefer-const": [
+            "error"
+        ],
+        "yoda": [
+            "error"
+        ],
+        "max-len": [
+            "error",
+            {
+                "code": 120,
+                "ignoreComments": true
+            }
+        ],
+        "no-tabs": [
+            "error"
         ]
     }
 };

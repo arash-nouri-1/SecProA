@@ -77,7 +77,8 @@ class LogFile
      *
      * @return {LogFile} A singleton logger instance
      */
-    static createLogFile(filename, level = "info", rfsOptions = {size: "10M", interval: "1d", compress: "gzip", path: "logs"})
+    static createLogFile(filename, level = "info", rfsOptions = {size: "10M",
+        interval: "1d", compress: "gzip", path: "logs"})
     {
         if(!LogFile.loggers)
         {

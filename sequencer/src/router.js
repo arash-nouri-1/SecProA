@@ -32,7 +32,8 @@ redisClient.onDisconnect(() => {
 });
 
 // Connect to the redis client
-logger.debug(`Connecting to the redis database at ${process.env.REDIS_HOST || "localhost"}:${process.env.REDIS_PORT || 6379}`);
+logger.debug(`Connecting to the redis database at ${process.env.REDIS_HOST ||
+    "localhost"}:${process.env.REDIS_PORT || 6379}`);
 redisClient.connect();
 
 // Create an express router
