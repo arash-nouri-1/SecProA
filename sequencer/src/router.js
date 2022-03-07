@@ -4,7 +4,7 @@ const LogFile = require("logfile");
 const RedisClient = require("redis");
 
 // Get the logger instance
-const logFile = LogFile.createLogFile("sequencer.log");
+const logFile = LogFile.createLogFile("sequencer");
 const logger = logFile.getLogger();
 
 // Create redis client

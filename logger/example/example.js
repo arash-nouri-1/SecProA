@@ -1,7 +1,7 @@
 const express = require("express");
 const LogFile = require("../lib/index");
 
-const logFile = LogFile.createLogFile("example.log");
+const logFile = LogFile.createLogFile("Example");
 const logger = logFile.getLogger();
 
 logger.info("Info Log");

@@ -2,6 +2,8 @@
   hosts: configurator
   tasks:
     - name: Remove Redis cluster
+      tags:
+        - redis
       kubernetes.core.helm:
         name: "{{ redis.name }}"
         chart_ref: dandydev/redis-ha
@@ -9,6 +11,8 @@
         state: absent
 
     - name: "Remove Redis Sentinel Service"
+      tags:
+        - redis
       kubernetes.core.k8s:
         state: absent
         kind: Service
@@ -16,6 +20,8 @@
         name: "{{ redis.name }}-redis-sentinel"
 
     - name: "Remove Sequencer Deployment"
+      tags:
+        - sequencer
       kubernetes.core.k8s:
         state: absent
         kind: Deployment
@@ -23,6 +29,8 @@
         name: sequencer
 
     - name: "Remove Sequencer Service"
+      tags:
+        - sequencer
       kubernetes.core.k8s:
         state: absent
         kind: Service
@@ -30,6 +38,8 @@
         name: sequencer-server
 
     - name: "Remove Namesapce"
+      tags:
+        - setup
       kubernetes.core.k8s:
         state: absent
         kind: Namespace

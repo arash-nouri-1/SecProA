@@ -1,7 +1,6 @@
 const express = require("express");
 const winston = require("winston");
 const morgan = require("morgan");
-const rfs = require("rotating-file-stream");
 
 /**
  * A rolling log file with pre configured loggers.
@@ -11,25 +10,23 @@ class LogFile
     /**
      * @param {string} logfile The file where logs are written to.
      * @param {string} [level=info] The minimum loglevel.
-     * @param {rfs.Options} rfsOptions Options to configure a rolling file.
      */
-    constructor(logFile, level, rfsOptions)
+    constructor(logFile, level)
     {
         this.logFile = logFile;
         this.level = level;
-        this.rfsOptions = rfsOptions;
 
         this.logger = winston.createLogger({
             level: this.level,
             transports: [
                 new winston.transports.Console({
-                    json: false,
-                    format: winston.format.cli(),
+                    format: winston.format.combine(
+                        logFileFormat(this.logFile),
+                        winston.format.timestamp(),
+                        winston.format.json(),
+                        //winston.format.errors()
+                    ),
                     handleExceptions: true
-                }),
-                new winston.transports.Stream({
-                    stream: rfs.createStream(this.logFile, this.rfsOptions),
-                    format: winston.format.json()
                 })
             ]
         });
@@ -46,24 +43,20 @@ class LogFile
     }
 
     /**
-     * Log access logs to the internal logger and also optionally to a seperate file.
+     * Log access logs in common log format.
      *
      * @param {string} [logLevel] The log level of the access logs.
-     * @param {string?} [filename] Additional filename of a logfile for the pure access logs. Disabled when left blank.
+     * @param {string} [format=combined] A morgan logging format.
      *
      * @return {express.Router} An express middleware router.
      */
-    createMiddleware(logLevel = "info", filename = "")
+    createMiddleware(logLevel = "http", format = "combined")
     {
         const router = express.Router();
-        router.use(morgan("common", {stream: new LogStream(this.logger, logLevel)}));
 
-        if(!filename || filename !== "")
-        {
-            router.use(morgan("combined", {
-                stream: rfs.createStream(filename, this.rfsOptions)
-            }));
-        }
+        router.use(morgan(format, {
+            stream: new LogStream(this.logger, logLevel)
+        }));
 
         return router;
     }
@@ -72,13 +65,11 @@ class LogFile
      * Creates a single LogFile and its associated loggers.:
      *
      * @param {string} filename The filename where logs are written to.
-     * @param {string} [level=info] The minimum loglevel of this logfile.
-     * @param {rfs.Options} rfsOptions Options to configure this rolling file.
+     * @param {string} [level=http] The minimum loglevel of this logfile.
      *
      * @return {LogFile} A singleton logger instance
      */
-    static createLogFile(filename, level = "info", rfsOptions = {size: "10M",
-        interval: "1d", compress: "gzip", path: "logs"})
+    static createLogFile(filename, level = "http")
     {
         if(!LogFile.loggers)
         {
@@ -87,7 +78,7 @@ class LogFile
 
         if(Object.keys(LogFile.loggers).indexOf(filename) === -1)
         {
-            LogFile.loggers[filename] = new LogFile(filename, level, rfsOptions);
+            LogFile.loggers[filename] = new LogFile(filename, level);
         }
 
         return LogFile.loggers[filename];
@@ -114,9 +105,17 @@ class LogStream
      */
     write(msg)
     {
-        this.logger[this.level](msg.trim());
+        this.logger.log(this.level, msg.trim());
     }
 }
+
+/**
+ * Custom winston format to attach the logFile name to the logging output.
+ */
+const logFileFormat = winston.format((info, opts) => {
+    info.logFile = opts;
+    return info;
+});
 
 // Export the LogFile class
 module.exports = LogFile;

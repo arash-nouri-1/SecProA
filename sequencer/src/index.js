@@ -4,7 +4,7 @@ const LogFile = require("logfile");
 
 
 // Create logger
-const logFile = LogFile.createLogFile("sequencer.log", process.env.LOGLEVEL || "info");
+const logFile = LogFile.createLogFile("sequencer", process.env.LOGLEVEL || "http");
 const logger = logFile.getLogger();
 
 
@@ -13,7 +13,7 @@ const app = express();
 
 
 // Register logging middleware
-app.use(logFile.createMiddleware("info", "access.log"));
+app.use(logFile.createMiddleware());
 
 // Register body parser middleware
 app.use(express.json());

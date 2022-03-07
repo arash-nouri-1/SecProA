@@ -1,7 +1,7 @@
 const express = require("express");
 const LogFile = require("../lib/index");
 
-const logFile = LogFile.createLogFile("example.log", "debug", {interval: "1h"});
+const logFile = LogFile.createLogFile("Example With Options", "debug");
 const logger = logFile.getLogger();
 
 logger.info("Info Log");

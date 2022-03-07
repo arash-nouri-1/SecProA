@@ -1,0 +1,125 @@
+- name: Deploy Fluentd
+  hosts: configurator
+  tasks:
+    - name: Create Service Account
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ fluentd.namespace }}"
+        definition:
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            name: fluentd
+            namespace: "{{ fluentd.namespace }}"
+
+    - name: Create ClusterRole
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ fluentd.namespace }}"
+        definition:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRole
+          metadata:
+            name: fluentd
+            namespace: "{{ fluentd.namespace }}"
+          rules:
+          - apiGroups:
+            - ""
+            resources:
+            - pods
+            - namespaces
+            verbs:
+            - get
+            - list
+            - watch
+
+    - name: Create ClusterRoleBinding
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ fluentd.namespace }}"
+        definition:
+          kind: ClusterRoleBinding
+          apiVersion: rbac.authorization.k8s.io/v1
+          metadata:
+            name: fluentd
+          roleRef:
+            kind: ClusterRole
+            name: fluentd
+            apiGroup: rbac.authorization.k8s.io
+          subjects:
+            - kind: ServiceAccount
+              name: fluentd
+              namespace: "{{ fluentd.namespace }}"
+
+    - name: Create Daemonset
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: DaemonSet
+          metadata:
+            name: fluentd
+            namespace: "{{ fluentd.namespace }}"
+            labels:
+              k8s-app: fluentd-logging
+              version: v1
+          spec:
+            selector:
+              matchLabels:
+                k8s-app: fluentd-logging
+                version: v1
+            template:
+              metadata:
+                labels:
+                  k8s-app: fluentd-logging
+                  version: v1
+              spec:
+                serviceAccount: fluentd
+                serviceAccountName: fluentd
+                tolerations:
+                - key: node-role.kubernetes.io/master
+                  effect: NoSchedule
+                containers:
+                - name: fluentd
+                  image: "{{ fluentd.image }}:{{ fluentd.tag }}"
+                  env:
+                    - name: FLUENT_ELASTICSEARCH_HOST
+                      value: "{{ fluentd.elastic.host }}"
+                    - name: FLUENT_ELASTICSEARCH_PORT
+                      value: "{{ fluentd.elastic.port | string }}"
+                  resources:
+                    limits:
+                      memory: 200Mi
+                    requests:
+                      cpu: 100m
+                      memory: 200Mi
+                  volumeMounts:
+                    - name: fluentd-config
+                      mountPath: /fluentd/etc
+                    - name: varlog
+                      mountPath: /var/log
+                      readOnly: false
+                    # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+                    - name: dockercontainerlogdirectory
+                      mountPath: /var/lib/docker/containers
+                      readOnly: true
+                    # When actual pod logs in /var/log/pods, the following lines should be used.
+                    - name: varlogpods
+                      mountPath: /var/log/pods
+                      readOnly: true
+                terminationGracePeriodSeconds: 30
+                volumes:
+                  - name: fluentd-config
+                    configMap:
+                      name: fluentd-config
+                  - name: varlog
+                    hostPath:
+                      path: /var/log
+                  # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+                  - name: dockercontainerlogdirectory
+                    hostPath:
+                      path: /var/lib/docker/containers
+                  # When actual pod logs in /var/log/pods, the following lines should be used.
+                  - name: varlogpods
+                    hostPath:
+                      path: /var/log/pods

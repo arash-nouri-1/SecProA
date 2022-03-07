@@ -1,6 +1,8 @@
 - name: "Load Config on localhost"
   hosts: localhost
   connection: local
+  tags:
+    - config
   tasks:
     - name: "Load Config on localhost"
       include_vars:
@@ -8,6 +10,8 @@
 
 - name: "Load Config on configurator host"
   hosts: configurator
+  tags:
+    - config
   tasks:
     - name: "Load Config on configurator host"
       include_vars:
@@ -15,10 +19,32 @@
 
 
 - import_playbook: "./build/build-services.yml"
+  tags: build
   when: build.enabled == true
 
 - import_playbook: "./kubernetes/setup.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - setup
 
 - import_playbook: "./kubernetes/deploy-redis.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - redis
 
 - import_playbook: "./kubernetes/deploy-sequencer.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - sequencer
+
+- import_playbook: "./fluentd/deploy.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - fluentd
+    - logging
+    - log
+  when: fluentd.enabled == true

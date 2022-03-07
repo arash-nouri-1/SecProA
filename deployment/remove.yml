@@ -1,12 +1,16 @@
 - name: "Load Config on localhost"
   hosts: localhost
   connection: local
+  tags:
+    - config
   tasks:
     - name: "Load Config on localhost"
       include_vars:
         file: ./config.yml
 
 - name: "Load Config on configurator host"
+  tags:
+    - config
   hosts: configurator
   tasks:
     - name: "Load Config on configurator host"
@@ -15,3 +19,14 @@
 
 
 - import_playbook: "./kubernetes/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+
+- import_playbook: "./fluentd/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - fluentd
+    - logging
+    - log

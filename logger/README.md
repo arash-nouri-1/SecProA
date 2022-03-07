@@ -12,5 +12,4 @@ This module makes use of the following dependencies:
 
 - [winston](https://github.com/winstonjs/winston) - MIT
 - [morgan](https://github.com/expressjs/morgan) - MIT
-- [rotating-file-stream](https://github.com/iccicci/rotating-file-stream) - MIT
 - [express](https://github.com/expressjs/express) - MIT

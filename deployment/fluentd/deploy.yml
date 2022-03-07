@@ -1,0 +1,15 @@
+- name: Setup prerequisites
+  hosts: configurator
+  tasks:
+    - name: Create namesapce
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          kind: Namespace
+          apiVersion: v1
+          metadata:
+            name: "{{ fluentd.namespace }}"
+
+- import_playbook: ./configmap.yml
+
+- import_playbook: ./daemonset.yml

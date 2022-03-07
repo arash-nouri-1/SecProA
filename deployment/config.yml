@@ -5,10 +5,13 @@ build:
 docker:
   # Registry / account to push the images to
   #  <registry>/<image name>:<tag>
-  registry: howsami
+  registry: "ghcr.io/watcherwhale"
+
+  imagePullSecrets:
+    - name: ghcr-io
 
   # Push to registry
-  push: no
+  push: yes
 
   # The tag of the build
   #  <registry>/<image name>:<tag>
@@ -24,7 +27,7 @@ redis:
   name: howsami
 
   # Run all instances on speperate hosts
-  hostSeperated: false
+  hostSeperated: true
 
   # Docker tag of the redis pods
   tag: 6-alpine
@@ -48,3 +51,45 @@ sequencer:
   # - Always
   # - IfNotPresent
   pullPolicy: IfNotPresent
+
+# All checks to deploy (and/or build) to the cluster.
+#   Name is the name of the image
+checks:
+  - name: dns
+    replicas: 1
+
+  - name: https
+    replicas: 1
+
+  - name: ip
+    replicas: 1
+
+# Logging
+fluentd:
+  # Deploy fluentd
+  enabled: true
+
+  # Namespace where fluentd lives
+  namespace: fluentd
+
+  # Docker Image
+  #   Best practice is to create a custom fluentd dockerfile
+  #   with preinstalled plugins of choice.
+  image: fluent/fluentd-kubernetes-daemonset
+  tag: v1-debian-elasticsearch
+
+  # Elasticsearch
+  #   Additional settings can be configured in:
+  #     ./fluentd/fluentd-config/elastic.conf
+  elastic:
+    enabled: false
+
+    # Connection details
+    host: elasticsearch
+    port: 9200
+
+  # Custom fluentd config file
+  #   Add additional custom fluentd config options to the instance:
+  #     ./fluentd/fluentd-config/custom.conf
+  custom:
+    enabled: false

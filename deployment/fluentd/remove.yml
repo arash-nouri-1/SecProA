@@ -1,0 +1,43 @@
+- name: Remove fluentd deployment
+  hosts: configurator
+  tasks:
+    - name: Remove Daemonset
+      kubernetes.core.k8s:
+        state: absent
+        kind: DaemonSet
+        name: fluentd
+        namespace: "{{ fluentd.namespace }}"
+
+    - name: Remove ClusterRoleBinding
+      kubernetes.core.k8s:
+        state: absent
+        kind: ClusterRoleBinding
+        name: fluentd
+        namespace: "{{ fluentd.namespace }}"
+
+    - name: Remove ClusterRole
+      kubernetes.core.k8s:
+        state: absent
+        namespace: "{{ fluentd.namespace }}"
+        kind: ClusterRole
+        name: fluentd
+
+    - name: Remove Service Account
+      kubernetes.core.k8s:
+        state: absent
+        kind: ServiceAccount
+        name: fluentd
+        namespace: "{{ fluentd.namespace }}"
+
+    - name: Remove Configmap
+      kubernetes.core.k8s:
+        state: absent
+        kind: ConfigMap
+        name: fluentd-config
+        namespace: "{{ fluentd.namespace }}"
+
+    - name: Remove Namespace
+      kubernetes.core.k8s:
+        state: absent
+        kind: Namespace
+        name: "{{ fluentd.namespace }}"
