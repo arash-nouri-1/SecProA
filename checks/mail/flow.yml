@@ -1,0 +1,7 @@
+name: mailcheck
+stages:
+  - name: "Mailcheck stage"
+    checks:
+      - DKIM.py
+      - DMARC.py
+      - SPF.py
