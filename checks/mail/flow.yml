@@ -1,4 +1,4 @@
-name: mailcheck
+name: mail
 stages:
   - name: "Mailcheck stage"
     checks:

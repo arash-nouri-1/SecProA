@@ -2,6 +2,7 @@
 import argparse
 import dns.resolver
 import json
+
 parser = argparse.ArgumentParser(description='Simple DKIM quick test.')
 parser.add_argument('domain', help='Domain name to test')
 args = parser.parse_args()
@@ -10,10 +11,9 @@ listselectors=["selector1","selector2","google","everlytickey1","everlytickey2",
 for selector in listselectors:
  try:
     test_dkims = dns.resolver.resolve(selector+'._domainkey.' + domain , 'TXT')
-    print(selector)
     break
  except:
-    print(domain)
+    pass
 def DKIMtest():
   try:
      test_dkim = test_dkims
@@ -22,12 +22,12 @@ def DKIMtest():
          mes="[PASS] DKIM record found."
          score=10
          result={"name":"DKIM check","score":score,"message":mes}
-         jsonresult=json.dumps(result)
-         return jsonresult
+         return result
   except:
     mes="[FAIL] DKIM record not found."
     score=-1
     result={"name":"DKIM check","score":score,"message":mes}
-    jsonresult=json.dumps(result)
-    return jsonresult
-print(DKIMtest())
+    return result
+result=DKIMtest()
+jsonresult=json.dumps(result)
+print(jsonresult)
