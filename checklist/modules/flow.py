@@ -1,21 +1,37 @@
-import yaml
 import json
+from subprocess import Popen, PIPE
+import yaml
 
-from subprocess import Popen
-from subprocess import PIPE
 
 class Flow:
+    """A flow executor class
+    """
     def __init__(self):
         self.load()
 
     def load(self):
-        with open("flow.yml", "r") as stream:
+        """Load the flow file (flow.yml).
+        """
+        with open("flow.yml", "r", encoding="utf-8") as stream:
             self.flow = yaml.safe_load(stream)
 
-    def getName(self):
+    def getName(self) -> str:
+        """Get the name of the this flow.
+
+        Returns:
+            str: The name of the flow.
+        """
         return self.flow['name']
 
-    def run(self, domain):
+    def run(self, domain: str) -> list:
+        """Run the flow on a specific domain.
+
+        Args:
+            domain (str): The domain to execute the flow on.
+
+        Returns:
+            list: A list of results from the indivdual checks.
+        """
         stages = len(self.flow['stages'])
 
         results = []

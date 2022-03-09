@@ -1,11 +1,13 @@
 import os
 import time
 from modules.flow import Flow
-import modules.jobs as jobs
+from modules import jobs
 
 TIMEOUT = 5
 
 def main():
+    """The main method.
+    """
     flow = Flow()
 
     while True:
@@ -21,7 +23,7 @@ def main():
             job['checks'] = results
 
             jobs.pushResults(job)
-        except:
+        except Exception:
             time.sleep(TIMEOUT)
 
 if __name__ == "__main__":

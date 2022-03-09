@@ -1,0 +1,16 @@
+name: Python Code Style
+on:
+  pull_request:
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+
+      - name: Install Linter
+        run: pip3 install pylint
+
+      - name: Check Codestyle
+        run: find . -type f -name '*.py' -exec pylint --rcfile=.pylintrc {} +

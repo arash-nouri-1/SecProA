@@ -4,6 +4,9 @@ import sys
 from modules.flow import Flow
 
 def main(domain):
+    """
+    Main method
+    """
     flow = Flow()
     results = flow.run(domain)
     print(results)

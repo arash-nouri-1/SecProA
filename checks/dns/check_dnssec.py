@@ -23,7 +23,7 @@ def testdnssec(opts):
             socket.gethostbyname_ex(domain)
             num = True
         except:
-            num = False           
+            num = False
         if not num:
             try:
                 domain = ("www.%s"%domain)
@@ -61,7 +61,7 @@ def testdnssec(opts):
     else:
         print ('{"name": "DNSSEC", "score": 0, "message": "Impossible to check domains"}')
         sys.exit(ExitUnknown)
-           
+
 def main():
     parser = OptionParser()
     parser.add_option("-H","--domain", type=str,
@@ -71,8 +71,8 @@ def main():
 
     (opts, args) = parser.parse_args()
     if not opts.domain:
-        parser.error('{"name": "DNSSEC", "message": "Please, this program requires domain arguments, for example: -H www.ciencias.ulisboa.pt."}') 
-        
+        parser.error('{"name": "DNSSEC", "message": "Please, this program requires domain arguments, for example: -H www.ciencias.ulisboa.pt."}')
+
     testdnssec(opts)
 
 if __name__ == '__main__':
