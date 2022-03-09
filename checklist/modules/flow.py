@@ -1,7 +1,10 @@
-import json
-from subprocess import Popen, PIPE
-import yaml
+import sys
+import os
 
+import yaml
+import json
+
+from subprocess import Popen, PIPE
 
 class Flow:
     """A flow executor class
@@ -50,7 +53,7 @@ class Flow:
             checks = []
 
             for check in stage['checks']:
-                checks.append(Popen(["./" + check, domain], stdout=PIPE, encoding="utf-8", env=env))
+                checks.append(Popen([sys.executable, os.path.join(os.getcwd(), check), domain], stdout=PIPE, encoding="utf-8", env=env))
 
             for check in checks:
                 output, err = check.communicate()
