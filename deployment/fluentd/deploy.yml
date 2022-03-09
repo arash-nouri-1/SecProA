@@ -1,5 +1,6 @@
+---
 - name: Setup prerequisites
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: Create namesapce
       kubernetes.core.k8s:

@@ -7,7 +7,7 @@ for DIR in $DIRS
 do
     echo "#############################################"
     echo "Building flow $DIR"
-    docker build -f Dockerfile --build-arg checklist=$DIR -t $DIR . > /dev/null
+    docker build -f Dockerfile --build-arg checklist=$DIR --build-arg registry=test -t $DIR . > /dev/null
     echo "Running flow $DIR"
     docker run --rm $DIR python /app/oneshot.py $@
 

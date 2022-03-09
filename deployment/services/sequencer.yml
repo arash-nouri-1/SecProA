@@ -1,0 +1,85 @@
+---
+- name: Deploy Sequencer
+  hosts: localhost
+  tasks:
+    - name: "Deploy Sequencer"
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "sequencer"
+            labels:
+              app: "sequencer"
+          spec:
+            replicas: "{{ sequencer.replicas.min }}"
+            selector:
+              matchLabels:
+                app: "sequencer"
+            template:
+              metadata:
+                labels:
+                  app: "sequencer"
+              spec:
+                imagePullSecrets: "{{ docker.imagePullSecrets }}"
+                containers:
+                  - name: "sequencer"
+                    image: "{{ docker.registry }}/sequencer:{{ sequencer.tag }}"
+                    imagePullPolicy: "{{ docker.pullPolicy }}"
+                    ports:
+                      - containerPort: 3000
+                    resources:
+                      requests:
+                        memory: "15Mi"
+                        cpu: "100m"
+                      limits:
+                        memory: "50Mi"
+                        cpu: "300m"
+                    env:
+                      - name: PORT
+                        value: "3000"
+                      - name: REDIS_HOST
+                        value: "{{ app.name }}-redis-sentinel.{{ cluster.namespace }}"
+                      - name: REDIS_PORT
+                        value: "26379"
+                      - name: LOGLEVEL
+                        value: "{{ sequencer.loglevel }}"
+
+    - name: Deploy Sequencer Service
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: sequencer-server
+          spec:
+            selector:
+              app: sequencer
+            ports:
+              - name: http
+                protocol: TCP
+                port: 3000
+                targetPort: 3000
+
+    - name: Deploy AutoScaler
+      when: "autoscaler.enabled == true"
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: autoscaling/v1
+          kind: HorizontalPodAutoscaler
+          metadata:
+            name: sequencer-autoscaler
+          spec:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: sequencer
+            minReplicas: "{{ sequencer.replicas.min }}"
+            maxReplicas: "{{ sequencer.replicas.max }}"
+            targetCPUUtilizationPercentage: 90

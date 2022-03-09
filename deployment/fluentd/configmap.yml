@@ -1,5 +1,6 @@
+---
 - name: Apply Fluentd Configmaps
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: Configmap
       kubernetes.core.k8s:

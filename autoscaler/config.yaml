@@ -1,0 +1,20 @@
+---
+evaluate:
+  type: "shell"
+  timeout: 2500
+  shell:
+    entrypoint: "python"
+    command:
+      - "/evaluate.py"
+metric:
+  type: "http"
+  timeout: 2500
+  http:
+    method: "POST"
+    url: "http://sequencer-server:3000/api/v1/jobs"
+    successCodes:
+      - 200
+    headers:
+      Content-Type: "application/json"
+    parameterMode: body
+runMode: "per-resource"

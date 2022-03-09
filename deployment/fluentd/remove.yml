@@ -1,5 +1,6 @@
+---
 - name: Remove fluentd deployment
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: Remove Daemonset
       kubernetes.core.k8s:

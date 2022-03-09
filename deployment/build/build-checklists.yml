@@ -1,0 +1,36 @@
+---
+- name: Build Docker Images
+  hosts: localhost
+  tasks:
+    - name: Build Checklist Autoscaler
+      community.docker.docker_image:
+        name: "{{ docker.registry }}/checklist-scaler"
+        tag: "{{ item }}"
+
+        source: build
+
+        build:
+          path: ../../autoscaler
+          dockerfile: Dockerfile
+
+        push: "{{ build.push }}"
+      with_items: "{{ build.tags }}"
+
+    - name: Build All Checklists
+      community.docker.docker_image:
+        name: "{{ docker.registry }}/checklist"
+        tag: "{{ item[0].name }}-{{ item[1] }}"
+
+        source: build
+
+        build:
+          path: ../../checks
+          dockerfile: Dockerfile
+
+          args:
+            registry: "{{ docker.registry }}"
+            checklist: "{{ item[0].name }}"
+
+        push: "{{ build.push }}"
+
+      loop: "{{ checklists | product(build.tags) | list }}"

@@ -1,5 +1,6 @@
+---
 - name: "Deploy Redis Cluster"
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: Add required helm repo
       kubernetes.core.helm_repository:
@@ -8,7 +9,7 @@
 
     - name: Install Redis cluster
       kubernetes.core.helm:
-        name: "{{ redis.name }}"
+        name: "{{ app.name }}"
         chart_ref: dandydev/redis-ha
         release_namespace: "{{ cluster.namespace }}"
         release_values:
@@ -31,11 +32,11 @@
           apiVersion: v1
           kind: Service
           metadata:
-            name: "{{ redis.name }}-redis-sentinel"
+            name: "{{ app.name }}-redis-sentinel"
           spec:
             selector:
               app: redis-ha
-              release: "{{ redis.name }}"
+              release: "{{ app.name }}"
             ports:
               - protocol: TCP
                 port: 26379

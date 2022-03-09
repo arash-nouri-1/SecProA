@@ -1,0 +1,29 @@
+---
+- name: Deploy Ingress
+  hosts: localhost
+  tasks:
+    - name: Deploy Ingress
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+          metadata:
+            name: "{{ app.name }}-ingress"
+          spec:
+            tls:
+              - hosts:
+                  - 'howsami.local'
+                secretName: howsami-local-tls
+            rules:
+              - host: "{{ app.host }}"
+                http:
+                  paths:
+                    - path: /api/v1
+                      pathType: Prefix
+                      backend:
+                        service:
+                          name: sequencer-server
+                          port:
+                            number: 3000

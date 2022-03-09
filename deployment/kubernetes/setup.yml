@@ -1,13 +1,6 @@
-- name: Install Required packages
-  hosts: configurator
-  tasks:
-    - name: "Install helm"
-      package:
-        name: "helm"
-        state: latest
-
+---
 - name: Setup Kubernetes
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: "Create namespace"
       kubernetes.core.k8s:

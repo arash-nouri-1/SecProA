@@ -1,47 +1,20 @@
+---
 - name: "Remove Kubernetes Deployments"
-  hosts: configurator
+  hosts: localhost
   tasks:
-    - name: Remove Redis cluster
+    - name: "Remove Ingress"
       tags:
-        - redis
-      kubernetes.core.helm:
-        name: "{{ redis.name }}"
-        chart_ref: dandydev/redis-ha
-        release_namespace: "{{ cluster.namespace }}"
-        state: absent
-
-    - name: "Remove Redis Sentinel Service"
-      tags:
-        - redis
+        - Ingress
       kubernetes.core.k8s:
         state: absent
-        kind: Service
+        kind: Ingress
+        name: "{{ app.name }}-ingress"
         namespace: "{{ cluster.namespace }}"
-        name: "{{ redis.name }}-redis-sentinel"
 
-    - name: "Remove Sequencer Deployment"
-      tags:
-        - sequencer
-      kubernetes.core.k8s:
-        state: absent
-        kind: Deployment
-        namespace: "{{ cluster.namespace }}"
-        name: sequencer
-
-    - name: "Remove Sequencer Service"
-      tags:
-        - sequencer
-      kubernetes.core.k8s:
-        state: absent
-        kind: Service
-        namespace: "{{ cluster.namespace }}"
-        name: sequencer-server
-
-    - name: "Remove Namesapce"
+    - name: "Remove Namespace"
       tags:
         - setup
       kubernetes.core.k8s:
         state: absent
         kind: Namespace
         name: "{{ cluster.namespace }}"
-

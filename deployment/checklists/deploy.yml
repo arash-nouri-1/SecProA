@@ -1,0 +1,69 @@
+---
+- name: Deploy Checklists
+  hosts: localhost
+  tasks:
+    - name: "Deploy Checklists Deployments"
+      with_items: "{{ checklists }}"
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "{{ item.name }}-checklist"
+            labels:
+              app: "checklist"
+              throughput: "{{ item.throughput | string }}"
+              checklist: "{{ item.name }}"
+          spec:
+            replicas: "{{ item.replicas.min }}"
+            selector:
+              matchLabels:
+                app: "checklist"
+            template:
+              metadata:
+                labels:
+                  app: "checklist"
+              spec:
+                imagePullSecrets: "{{ docker.imagePullSecrets }}"
+                containers:
+                  - name: "{{ item.name }}-checklist"
+                    image: "{{ docker.registry }}/checklist:{{ item.name }}-{{ item.tag }}"
+                    imagePullPolicy: "{{ docker.pullPolicy }}"
+                    env:
+                      - name: SEQUENCER_URL
+                        value: "http://sequencer-server:3000"
+
+    - name: Deploy Autoscaler
+      with_items: "{{ checklists }}"
+      when: "autoscaler.enabled == true"
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ cluster.namespace }}"
+        definition:
+          apiVersion: custompodautoscaler.com/v1
+          kind: CustomPodAutoscaler
+          metadata:
+            name: "{{ item.name }}-autoscaler"
+          spec:
+            template:
+              spec:
+                imagePullSecrets: "{{ docker.imagePullSecrets }}"
+                containers:
+                  - name: "{{ item.name }}-autoscaler"
+                    image: "{{ docker.registry }}/checklist-scaler:latest"
+                    imagePullPolicy: "{{ docker.pullPolicy }}"
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: "{{ item.name }}-checklist"
+            config:
+              - name: interval
+                value: "{{ item.interval | string }}"
+              - name: minReplicas
+                value: "{{ item.replicas.min | string }}"
+              - name: maxReplicas
+                value: "{{ item.replicas.max | string }}"
+              - name: downscaleStabilization
+                value: "{{ item.stabilization | string }}"

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -f ./docker/Dockerfile.service --build-arg project=sequencer -t sequencer .
+docker build -f docker/Dockerfile.sequencer -t ghcr.io/watcherwhale/sequencer .

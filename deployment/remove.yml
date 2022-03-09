@@ -1,6 +1,6 @@
+---
 - name: "Load Config on localhost"
   hosts: localhost
-  connection: local
   tags:
     - config
   tasks:
@@ -8,20 +8,29 @@
       include_vars:
         file: ./config.yml
 
-- name: "Load Config on configurator host"
-  tags:
-    - config
-  hosts: configurator
-  tasks:
-    - name: "Load Config on configurator host"
-      include_vars:
-        file: ./config.yml
-
-
-- import_playbook: "./kubernetes/remove.yml"
+- import_playbook: "./autoscaler/remove.yml"
   tags:
     - kubernetes
     - k8s
+    - autoscaler
+
+- import_playbook: "./redis/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - redis
+
+- import_playbook: "./services/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - sequencer
+
+- import_playbook: "./checklists/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - checklists
 
 - import_playbook: "./fluentd/remove.yml"
   tags:
@@ -30,3 +39,10 @@
     - fluentd
     - logging
     - log
+  when: fluentd.enabled == true
+
+- import_playbook: "./kubernetes/remove.yml"
+  tags:
+    - kubernetes
+    - k8s
+    - setup

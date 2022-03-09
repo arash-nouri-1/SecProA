@@ -1,0 +1,10 @@
+---
+- name: Remove Autoscaler Operator
+  hosts: localhost
+  tasks:
+    - name: Remove Custom Pod Autoscaler Operator
+      kubernetes.core.helm:
+        state: absent
+        name: "{{ app.name }}-autoscaler-operator"
+        chart_ref: "https://github.com/jthomperoo/custom-pod-autoscaler-operator/releases/download/{{ autoscaler.version }}/custom-pod-autoscaler-operator-{{ autoscaler.version }}.tgz"
+        release_namespace: kube-system

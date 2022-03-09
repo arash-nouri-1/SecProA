@@ -1,29 +1,29 @@
+---
 - name: Build Docker Images
   hosts: localhost
-  connection: local
   tasks:
     - name: Build Sequencer
       community.docker.docker_image:
+        push: "{{ build.push }}"
         name: "{{ docker.registry }}/sequencer"
-        tag: "{{ docker.buildTag }}"
+        tag: "{{ item }}"
 
         source: build
 
         build:
           path: ../../
-          dockerfile: docker/Dockerfile.service
-
-          args:
-            project: sequencer
+          dockerfile: docker/Dockerfile.sequencer
 
           pull: yes
 
-        push: "{{ docker.push }}"
+
+      with_items: "{{ build.tags }}"
 
     - name: Build Checklist template
       community.docker.docker_image:
         name: "{{ docker.registry }}/checklist"
         tag: template
+        push: "{{ build.push }}"
 
         source: build
 
@@ -32,25 +32,3 @@
             ../../checklist
 
           pull: yes
-
-        push: "{{ docker.push }}"
-
-    - name: Build All checklists
-      community.docker.docker_image:
-        name: "{{ docker.registry }}/checklist"
-        tag: "{{ item.name }}"
-
-        source: build
-
-        build:
-          path: ../../checks
-          dockerfile: Dockerfile
-
-          args:
-            registry: "{{ docker.registry }}"
-            checklist: "{{ item.name }}"
-
-        push: "{{ docker.push }}"
-
-      loop: "{{ checks }}"
-

@@ -1,5 +1,6 @@
+---
 - name: Deploy Fluentd
-  hosts: configurator
+  hosts: localhost
   tasks:
     - name: Create Service Account
       kubernetes.core.k8s:
@@ -23,15 +24,15 @@
             name: fluentd
             namespace: "{{ fluentd.namespace }}"
           rules:
-          - apiGroups:
-            - ""
-            resources:
-            - pods
-            - namespaces
-            verbs:
-            - get
-            - list
-            - watch
+            - apiGroups:
+                - ""
+              resources:
+                - pods
+                - namespaces
+              verbs:
+                - get
+                - list
+                - watch
 
     - name: Create ClusterRoleBinding
       kubernetes.core.k8s:
@@ -77,36 +78,36 @@
                 serviceAccount: fluentd
                 serviceAccountName: fluentd
                 tolerations:
-                - key: node-role.kubernetes.io/master
-                  effect: NoSchedule
+                  - key: node-role.kubernetes.io/master
+                    effect: NoSchedule
                 containers:
-                - name: fluentd
-                  image: "{{ fluentd.image }}:{{ fluentd.tag }}"
-                  env:
-                    - name: FLUENT_ELASTICSEARCH_HOST
-                      value: "{{ fluentd.elastic.host }}"
-                    - name: FLUENT_ELASTICSEARCH_PORT
-                      value: "{{ fluentd.elastic.port | string }}"
-                  resources:
-                    limits:
-                      memory: 200Mi
-                    requests:
-                      cpu: 100m
-                      memory: 200Mi
-                  volumeMounts:
-                    - name: fluentd-config
-                      mountPath: /fluentd/etc
-                    - name: varlog
-                      mountPath: /var/log
-                      readOnly: false
-                    # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
-                    - name: dockercontainerlogdirectory
-                      mountPath: /var/lib/docker/containers
-                      readOnly: true
-                    # When actual pod logs in /var/log/pods, the following lines should be used.
-                    - name: varlogpods
-                      mountPath: /var/log/pods
-                      readOnly: true
+                  - name: fluentd
+                    image: "{{ fluentd.image }}:{{ fluentd.tag }}"
+                    env:
+                      - name: FLUENT_ELASTICSEARCH_HOST
+                        value: "{{ fluentd.elastic.host }}"
+                      - name: FLUENT_ELASTICSEARCH_PORT
+                        value: "{{ fluentd.elastic.port | string }}"
+                    resources:
+                      limits:
+                        memory: 200Mi
+                      requests:
+                        cpu: 100m
+                        memory: 200Mi
+                    volumeMounts:
+                      - name: fluentd-config
+                        mountPath: /fluentd/etc
+                      - name: varlog
+                        mountPath: /var/log
+                        readOnly: false
+                      # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+                      - name: dockercontainerlogdirectory
+                        mountPath: /var/lib/docker/containers
+                        readOnly: true
+                      # When actual pod logs in /var/log/pods, the following lines should be used.
+                      - name: varlogpods
+                        mountPath: /var/log/pods
+                        readOnly: true
                 terminationGracePeriodSeconds: 30
                 volumes:
                   - name: fluentd-config

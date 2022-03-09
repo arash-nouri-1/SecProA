@@ -1,10 +1,7 @@
+---
 name: Test checklist flows
 on:
-  push:
-    paths:
-      - 'check/**'
-      - 'checklist/**'
-      - '.github/workflows/checks.yml'
+  pull_request:
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,7 +19,7 @@ jobs:
           MAXMIND: https://github.com/DocSpring/geolite2-city-mirror/raw/master/GeoLite2-City.tar.gz
 
       - name: Build base image
-        run: docker build -t checklist ./checklist
+        run: docker build -t test/checklist:template ./checklist
 
       - name: Test check flows
         run: ./test.sh $DOMAIN

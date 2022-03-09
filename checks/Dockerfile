@@ -1,5 +1,5 @@
 ARG registry
-FROM $registry/checklist:latest
+FROM $registry/checklist:template
 
 ARG checklist
 

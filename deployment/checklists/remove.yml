@@ -1,0 +1,19 @@
+---
+- name: Remove Checklists
+  hosts: localhost
+  tasks:
+    - name: "Remove Checklists"
+      with_items: "{{ checklists }}"
+      kubernetes.core.k8s:
+        state: absent
+        namespace: "{{ cluster.namespace }}"
+        name: "{{ item.name }}-checklist"
+        kind: Deployment
+
+    - name: Remove Autoscaler
+      with_items: "{{ checklists }}"
+      kubernetes.core.k8s:
+        state: absent
+        kind: CustomPodAutoscaler
+        name: "{{ app.name }}-{{ item.name }}-autoscaler"
+        namespace: "{{ cluster.namespace }}"

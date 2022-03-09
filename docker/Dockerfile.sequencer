@@ -1,0 +1,44 @@
+from node:16-alpine
+
+# Run as node user
+USER node
+RUN mkdir $HOME/sequencer && \
+    mkdir $HOME/sequencer/logger && \
+    mkdir $HOME/sequencer/redis && \
+    mkdir $HOME/sequencer/app
+
+#################
+# Build modules #
+#################
+
+# Logger
+WORKDIR /home/node/sequencer/logger
+COPY --chown=node:node ./logger/package* ./
+COPY --chown=node:node ./logger/lib/ ./lib
+RUN npm ci --production
+
+# Redis
+WORKDIR /home/node/sequencer/redis
+COPY --chown=node:node ./redis/package* ./
+COPY --chown=node:node ./redis/lib/ ./lib
+RUN npm ci --production
+
+#############
+# Build app #
+#############
+
+WORKDIR /home/node/sequencer/app
+
+# Install modules
+COPY --chown=node:node ./sequencer/package* ./
+RUN npm ci --production
+
+# Copy src files
+COPY --chown=node:node ./sequencer/src/ ./
+
+# Set default environment variables
+ENV PORT=3000
+ENV LOGLEVEL=http
+
+# Set entrypoint
+CMD [ "node", "index.js" ]
