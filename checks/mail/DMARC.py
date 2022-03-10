@@ -8,7 +8,6 @@ parser.add_argument('domain', help='Domain name to test')
 args = parser.parse_args()
 domain = args.domain
 def DMARCtest(domain):
-  print("start DMARC test")
   try:
     test_dmarc = dns.resolver.resolve('_dmarc.' + domain , 'TXT')
     for dns_data in test_dmarc:
