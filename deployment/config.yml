@@ -78,6 +78,27 @@ checklists:
     replicas:
       min: 1
       max: 5
+      
+  - name: mail
+
+    # The docker image tag: <name>-<tag>
+    tag: latest
+
+    # Amount of jobs one instance can handle
+    #  in the specified interval.
+    throughput: 20
+
+    # The interval (miliseconds) to periodicaly check
+    #  the size of the queue, and down/up scale
+    interval: 10000
+
+    # Amount of time (seconds) to stabilize downscaling.
+    stabilization: 200
+
+    # Define the range of amount of replicas to deploy.
+    replicas:
+      min: 1
+      max: 5
 
   - name: https
 
